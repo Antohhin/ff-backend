@@ -19,6 +19,9 @@ from src.tgbot.constants import (
     MEME_SOURCE_SET_LANG_REGEXP,
     MEME_SOURCE_SET_STATUS_REGEXP,
 )
+from src.tgbot.handlers import alerts, block, broken, reaction, start, upload
+from src.tgbot.handlers.error import send_stacktrace_to_tg_chat
+from src.tgbot.handlers.moderator import meme_source
 
 application: Application = None  # type: ignore
 
@@ -105,4 +108,9 @@ def setup_application(is_webhook: bool = False) -> Application:
 
 
 def run_polling(application: Application) -> None:
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    application.run_polling(
+        allowed_updates=Update.ALL_TYPES, 
+        timeout=60,
+        read_timeout=10,
+        connect_timeout=10,
+    )

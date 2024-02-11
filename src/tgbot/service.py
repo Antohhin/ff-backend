@@ -1,16 +1,10 @@
-from typing import Any
 from datetime import datetime
+from typing import Any
+
 from sqlalchemy import select, text
 from sqlalchemy.dialects.postgresql import insert
 
-from src.database import (
-    meme_source,
-    user,
-    user_tg,
-    user_language,
-    execute, fetch_one
-)
-
+from src.database import execute, fetch_one, meme_source, user, user_language, user_tg
 from src.storage.constants import Language
 
 
@@ -171,6 +165,14 @@ async def get_user_info(
     return await fetch_one(text(query))
 
 
+async def update_user(user_id: int, **kwargs) -> dict[str, Any] | None:
+    update_query = (
+        user.update()
+        .where(user.c.id == user_id)
+        .values(**kwargs)
+        .returning(user)
+    )
+    return await fetch_one(update_query)
 
 # async def sync_user_language(
 #     user_id: int,
